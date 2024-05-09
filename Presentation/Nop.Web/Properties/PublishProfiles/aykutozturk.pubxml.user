@@ -3,4 +3,9 @@
 https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\aykut.ozturk\Desktop\Publish\MarkaPromoV2</_PublishTargetUrl>
+    <History>True|2024-05-09T10:06:20.5365336Z;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
 </Project>
