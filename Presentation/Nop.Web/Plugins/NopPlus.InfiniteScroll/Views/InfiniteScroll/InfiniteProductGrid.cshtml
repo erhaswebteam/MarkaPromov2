@@ -1,0 +1,25 @@
+﻿@model List<ProductOverviewModel>
+@using System.Collections.Generic
+@using Nop.Web.Models.Catalog
+
+@foreach (var product in Model)
+{
+    <div class="item-box">
+            @Html.Partial("_ProductBox", product)
+        </div>
+}
+
+@if (ViewBag.NextPage != null && ViewBag.NextPage > 0)
+{
+    int categoryId = ViewBag.CategoryId;
+    int orderBy = ViewBag.OrderBy != null ? ViewBag.OrderBy : 0;
+    int pageSize = ViewBag.PageSize;
+    int nextPage = ViewBag.NextPage;
+    string viewMode = ViewBag.ViewMode;
+
+    <p class="pagination">
+        @*<a class="pagination__next" href="/InfiniteScroll/LoadProducts?categoryId=@categoryId&orderBy=@orderBy&pageSize=@pageSize&page=@nextPage">Next page</a>*@
+
+        <a class="pagination__next" data-categoryid="@categoryId" data-orderby="@orderBy" data-viewmode="@viewMode" data-pagesize="@pageSize" data-pagenumber="@nextPage"></a>
+    </p>
+}
