@@ -2,6 +2,13 @@
 @if (Model.EmailAFriendEnabled)
 {
     <div class="email-a-friend">
-        <button type="button" class="button-2 email-a-friend-button" onclick="setLocation('@Url.RouteUrl("ProductEmailAFriend", new { productId = Model.Id })')">@T("Products.EmailAFriend")</button>
+        <button type="button" class="button-2 email-a-friend-button" href="#emailAFriendToolTip" data-toggle="tooltip" data-placement="top" title="@T("Products.EmailAFriend")"
+        onclick="setLocation('@Url.RouteUrl("ProductEmailAFriend", new { productId = Model.Id })')">@T("Products.EmailAFriend")</button>
     </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#emailAFriendToolTip').tooltip();
+        })
+    </script>
 }

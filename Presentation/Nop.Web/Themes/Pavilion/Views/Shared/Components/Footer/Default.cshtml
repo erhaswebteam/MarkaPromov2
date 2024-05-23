@@ -35,7 +35,7 @@
                     }
                 </ul>
             </div>
-            <div class="footer-block">
+            <div class="footer-block" style="display: none">
                 <div class="title">
                     <strong>@T("Footer.CustomerService")</strong>
                 </div>
@@ -51,23 +51,23 @@
                     <strong>@T("Footer.MyAccount")</strong>
                 </div>
                 <ul class="list">
-					@if (Model.DisplayCustomerInfoFooterItem)
-	                {
-	                    <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
-	                }
-					@if (Model.DisplayCustomerAddressesFooterItem)
-	                {
-	                    <li><a href="@Url.RouteUrl("CustomerAddresses")">@T("Account.CustomerAddresses")</a></li>
-	                }
-	                @if (Model.DisplayCustomerOrdersFooterItem)
-	                {
-	                    <li><a href="@Url.RouteUrl("CustomerOrders")">@T("Account.CustomerOrders")</a></li>
-					}
+                    @if (Model.DisplayCustomerInfoFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
+                    }
+                    @if (Model.DisplayCustomerAddressesFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerAddresses")">@T("Account.CustomerAddresses")</a></li>
+                    }
+                    @if (Model.DisplayCustomerOrdersFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerOrders")">@T("Account.CustomerOrders")</a></li>
+                    }
                     @if (Model.ShoppingCartEnabled && Model.DisplayShoppingCartFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("ShoppingCart")">@T("ShoppingCart")</a></li>
                     }
-                	@if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
+                    @if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("Wishlist")">@T("Wishlist")</a></li>
                     }
@@ -90,7 +90,9 @@
                     <strong>@T("SevenSpikes.Themes.Pavilion.Footer.ContactUs")</strong>
                 </div>
                 <ul class="list">
-                    <li class="address"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Address")</span></li>
+                    @* <li class="address"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Address")</span></li> *@
+                    <li><a href="/filterSearch">@T("SevenSpikes.Themes.Pavilion.Footer.Search")</a></li>
+                    <li><a href="/recentlyviewedproducts">@T("SevenSpikes.Themes.Pavilion.Footer.RecentylViewedProducts")</a></li>
                     <li class="email"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span></li>
                     <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
                 </ul>
@@ -111,9 +113,9 @@
             @if (!removeCopyright)
             {
                 <div class="footer-powered-by">
-	                @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
-	                    Please find more info at https://www.nopcommerce.com/nopcommerce-copyright-removal-key*@
-	                Powered by <a href="@(OfficialSite.Main)" target="_blank" @(Model.IsHomePage ? string.Empty : "rel=nofollow")>nopCommerce</a>
+                    @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
+                Please find more info at https://www.nopcommerce.com/nopcommerce-copyright-removal-key*@
+                    Powered by <a href="@(OfficialSite.Main)" target="_blank" @(Model.IsHomePage ? string.Empty : "rel=nofollow")>nopCommerce</a>
                 </div>
 
             }
@@ -138,3 +140,20 @@
     </div>
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.Footer, additionalData = Model })
 </div>
+
+<style>
+    .footer-middle .center {
+        display: flex;
+        justify-content: center;
+        gap: 20px; /* Aradaki boşlukları ayarlamak için */
+    }
+
+    .footer-middle .footer-block {
+        flex: 1;
+        /* text-align: center; */ /* Ortalanmış içerik */
+    }
+
+        .footer-middle .footer-block[style*="display: none"] {
+            display: none !important;
+        }
+</style>
