@@ -1,7 +1,12 @@
 ﻿
 <script asp-location="Footer">
     $(document).ready(function () {
-        $('#eu-cookie-bar-notification').show();
+        if (window.location.href.split('/')[window.location.href.split('/').length - 1] != "cookielaw") {
+            $('#eu-cookie-bar-notification').show();
+        }
+        else {
+            $('#eu-cookie-bar-notification').hide();
+        }
 
         $('#eu-cookie-ok').on('click', function () {
             var postData = {};
@@ -25,10 +30,17 @@
 </script>
 <div id="eu-cookie-bar-notification" class="eu-cookie-bar-notification">
     <div class="content">
+        <div class="text-center text-bolder">@T("EUCookieLaw.Header")</div>
         <div class="text">@T("EUCookieLaw.Description2")</div>
         <div class="buttons-more">
-            <button type="button" class="ok-button button-1" id="eu-cookie-ok">@T("Common.OK")</button>
-            <a class="learn-more" href="@Url.RouteTopicUrl("privacyinfo")">@T("EUCookieLaw.LearnMore")</a>
+            <button type="button" class="ok-button button-1" id="eu-cookie-ok">@T("Common.Ok")</button>
+            <a class="learn-more" id="eu-cookie-policy" href="@Url.RouteTopicUrl("cookiepolicy")">@T("EUCookieLaw.Text")</a>
         </div>
     </div>
 </div>
+
+<style>
+    .text-bolder{
+        font-weight: bolder;
+    }
+</style>
