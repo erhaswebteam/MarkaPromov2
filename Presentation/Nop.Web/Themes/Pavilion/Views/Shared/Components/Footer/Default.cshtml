@@ -9,6 +9,23 @@
 @inject IStoreContext storeContext
 @inject IWorkContext workContext
 
+<style>
+    .footer-middle .center {
+        display: flex;
+        justify-content: center;
+        gap: 20px; /* Aradaki boşlukları ayarlamak için */
+    }
+
+    .footer-middle .footer-block {
+        flex: 1;
+        /* text-align: center; */ /* Ortalanmış içerik */
+    }
+
+        .footer-middle .footer-block[style*="display: none"] {
+            display: none !important;
+        }
+</style>
+
 @{
     var storeId = (await storeContext.GetCurrentStoreAsync()).Id;
     var removeCopyright = await settingService.GetSettingByKeyAsync("pavilionthemesettings.removecopyright", false, storeId, true);
@@ -35,7 +52,7 @@
                     }
                 </ul>
             </div>
-            <div class="footer-block" style="display: none">
+            <div class="footer-block">
                 <div class="title">
                     <strong>@T("Footer.CustomerService")</strong>
                 </div>
@@ -46,18 +63,20 @@
                     }
                 </ul>
             </div>
-            <div class="footer-block">
+            <div class="footer-block quick-contact">
                 <div class="title">
-                    <strong>@T("Footer.MyAccount")</strong>
+                    <strong>@T("SevenSpikes.Themes.Pavilion.Footer.ContactUs")</strong>
                 </div>
                 <ul class="list">
+                    <li class="email"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span></li>
+                    <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
                     @if (Model.DisplayCustomerInfoFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
                     }
                     @if (Model.DisplayCustomerAddressesFooterItem)
                     {
-                        <li><a href="@Url.RouteUrl("CustomerAddresses")">@T("Account.CustomerAddresses")</a></li>
+                        <li><a href="@Url.RouteUrl("CustomerAddresses")"><span class="fa-address-book">@T("Account.CustomerAddresses")</span></a></li>
                     }
                     @if (Model.DisplayCustomerOrdersFooterItem)
                     {
@@ -85,14 +104,12 @@
                     }
                 </ul>
             </div>
-            <div class="footer-block quick-contact">
+            <div class="footer-block quick-contact" style="display: none">
                 <div class="title">
                     <strong>@T("SevenSpikes.Themes.Pavilion.Footer.ContactUs")</strong>
                 </div>
                 <ul class="list">
-                    @* <li class="address"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Address")</span></li> *@
-                    <li><a href="/filterSearch">@T("SevenSpikes.Themes.Pavilion.Footer.Search")</a></li>
-                    <li><a href="/recentlyviewedproducts">@T("SevenSpikes.Themes.Pavilion.Footer.RecentylViewedProducts")</a></li>
+                    <li class="address"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Address")</span></li>
                     <li class="email"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span></li>
                     <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
                 </ul>
@@ -140,20 +157,3 @@
     </div>
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.Footer, additionalData = Model })
 </div>
-
-<style>
-    .footer-middle .center {
-        display: flex;
-        justify-content: center;
-        gap: 20px; /* Aradaki boşlukları ayarlamak için */
-    }
-
-    .footer-middle .footer-block {
-        flex: 1;
-        /* text-align: center; */ /* Ortalanmış içerik */
-    }
-
-        .footer-middle .footer-block[style*="display: none"] {
-            display: none !important;
-        }
-</style>
