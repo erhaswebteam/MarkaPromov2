@@ -1,12 +1,27 @@
 ﻿@model ProductDetailsModel.AddToCartModel
 @using Nop.Core.Domain.Orders
+
+<style>
+    .increment, .decrement {
+        border-color: aqua;
+        background-color: aqua;
+        color:black;
+    }
+
+        .increment:hover, .decrement:hover{
+            border-color: #f74258;
+            background-color: #f74258;
+            color: white;
+        }
+</style>
+
 @if (Model.UpdatedShoppingCartItemId > 0)
 {
     <input asp-for="UpdatedShoppingCartItemId" type="hidden" />
 }
 @if (!Model.DisableBuyButton || Model.CustomerEntersPrice)
 {
-	if (Model.CustomerEntersPrice)
+    if (Model.CustomerEntersPrice)
     {
         <div class="customer-entered-price">
             <div class="price-input">
@@ -45,11 +60,13 @@
                 }
                 else
                 {
-                    <input asp-for="EnteredQuantity" id="product_enteredQuantity_@Model.ProductId" class="qty-input" type="text" aria-label=@T("Products.Qty.AriaLabel")/>
+                    <button type="button" class="qty-input decrement">-</button>
+                    <input asp-for="EnteredQuantity" id="product_enteredQuantity_@Model.ProductId" class="qty-input" type="text" readonly="readonly" aria-label=@T("Products.Qty.AriaLabel") />
+                    <button type="button" class="qty-input increment">+</button>
                     //when a customer clicks 'Enter' button we submit the "add to cart" button (if visible)
                     <script asp-location="Footer">
-                        $(document).ready(function() {
-                            $("#@Html.IdFor(model => model.EnteredQuantity)").on("keydown", function(event) {
+                        $(document).ready(function () {
+                            $("#@Html.IdFor(model => model.EnteredQuantity)").on("keydown", function (event) {
                                 if (event.keyCode == 13) {
                                     $("#add-to-cart-button-@Model.ProductId").trigger("click");
                                     return false;
@@ -98,3 +115,19 @@
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAddInfo, additionalData = Model })
     </div>
 }
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector('.increment').addEventListener('click', function () {
+            var quantity = document.getElementById('product_enteredQuantity_@Model.ProductId');
+            quantity.value = parseInt(quantity.value) + 1;
+        });
+
+        document.querySelector('.decrement').addEventListener('click', function () {
+            var quantity = document.getElementById('product_enteredQuantity_@Model.ProductId');
+            if (parseInt(quantity.value) > 1) {
+                quantity.value = parseInt(quantity.value) - 1;
+            }
+        });
+    });
+</script>
