@@ -54,38 +54,36 @@
             </div>
             <div class="footer-block">
                 <div class="title">
-                    <strong>@T("Footer.CustomerService")</strong>
+                    <strong>@T("Footer.AccountDetail")</strong>
                 </div>
                 <ul class="list">
                     @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn2).ToList())
                     {
                         <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
                     }
-                </ul>
-            </div>
-            <div class="footer-block quick-contact">
-                <div class="title">
-                    <strong>@T("SevenSpikes.Themes.Pavilion.Footer.ContactUs")</strong>
-                </div>
-                <ul class="list">
-                    <li class="email"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span></li>
-                    <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
                     @if (Model.DisplayCustomerInfoFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("CustomerInfo")">@T("Account.MyAccount")</a></li>
-                    }
-                    @if (Model.DisplayCustomerAddressesFooterItem)
-                    {
-                        <li><a href="@Url.RouteUrl("CustomerAddresses")"><span class="fa-address-book">@T("Account.CustomerAddresses")</span></a></li>
                     }
                     @if (Model.DisplayCustomerOrdersFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("CustomerOrders")">@T("Account.CustomerOrders")</a></li>
                     }
+                    @if (Model.DisplayCustomerAddressesFooterItem)
+                    {
+                        <li><a href="@Url.RouteUrl("CustomerAddresses")"><span class="fa-address-book">@T("Account.CustomerAddresses")</span></a></li>
+                    }
                     @if (Model.ShoppingCartEnabled && Model.DisplayShoppingCartFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("ShoppingCart")">@T("ShoppingCart")</a></li>
                     }
+                </ul>
+            </div>
+            <div class="footer-block quick-contact">
+                <div class="title">
+                    <strong>@T("Footer.CustomerService")</strong>
+                </div>
+                <ul class="list">
                     @if (Model.WishlistEnabled && Model.DisplayWishlistFooterItem)
                     {
                         <li><a href="@Url.RouteUrl("Wishlist")">@T("Wishlist")</a></li>
@@ -102,6 +100,8 @@
                     {
                         <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
                     }
+                    <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
+                    <li class="email"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span></li>
                 </ul>
             </div>
             <div class="footer-block quick-contact" style="display: none">
