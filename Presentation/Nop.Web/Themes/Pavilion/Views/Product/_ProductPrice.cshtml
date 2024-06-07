@@ -55,7 +55,7 @@
                     @Model.BasePricePAngV
                 </div>
             }
-            if (Model.DisplayTaxShippingInfo)
+            @*if (Model.DisplayTaxShippingInfo)
             {
                 var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
                 //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
@@ -63,7 +63,7 @@
                 <div class="tax-shipping-info">
                     @T(inclTax ? "Products.Price.TaxShipping.InclTax" : "Products.Price.TaxShipping.ExclTax", Url.RouteTopicUrl("shippinginfo"))
                 </div>
-            }
+            }*@
 	        if (Model.IsRental)
 	        {
 	            <div class="rental-price">

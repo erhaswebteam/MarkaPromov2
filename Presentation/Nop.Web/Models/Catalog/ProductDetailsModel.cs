@@ -61,6 +61,8 @@ namespace Nop.Web.Models.Catalog
         public bool ShowGtin { get; set; }
         public string Gtin { get; set; }
 
+        public int StockQuantity { get; set; }  
+
         public bool ShowVendor { get; set; }
         public VendorBriefInfoModel VendorModel { get; set; }
 

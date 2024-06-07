@@ -6,6 +6,15 @@
 @{
     var publicKey = captchaSettings.ReCaptchaPublicKey ?? string.Empty;
 }
+@{
+    var subjectOptions = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Sipariş", Text = "Sipariş" },
+        new SelectListItem { Value = "Öneri", Text = "Öneri" },
+        new SelectListItem { Value = "Şikayet", Text = "Şikayet" },
+        new SelectListItem { Value = "Yardım", Text = "Yardım" }
+    };
+}
 
 <div id="contact-us-tab" class="contact-page write-review">
     @if (!Model.SuccessfullySent && !string.IsNullOrEmpty(Model.Result))
@@ -29,7 +38,9 @@
         {
             <div class="inputs">
                 <label asp-for="Subject" asp-postfix=":"></label>
-                <input asp-for="Subject" placeholder="@T("ContactUs.Subject.Hint")" class="contact_tab_subject subject" />
+                <select asp-for="Subject" asp-items="subjectOptions" class="contact_tab_subject subject">
+                    <option value="">@T("ContactUs.Subject.Hint")</option>
+                </select>
                 <nop-required />
                 <span asp-validation-for="Subject"></span>
             </div>
