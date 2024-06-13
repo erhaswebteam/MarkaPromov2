@@ -2190,7 +2190,8 @@ namespace Nop.Web.Controllers
         {
             var source = TempData["source"].ToString();
             var threeDCompleteRequest = JsonConvert.DeserializeObject<ThreeDPaymentCompleteRequest>(source);
-            var response = _iParaPaymentService.ThreeDPaymentComplete(form, threeDCompleteRequest);
+            //var response = _iParaPaymentService.ThreeDPaymentComplete(form, threeDCompleteRequest);
+            return null;
         }
 
         public IActionResult BankResult()
