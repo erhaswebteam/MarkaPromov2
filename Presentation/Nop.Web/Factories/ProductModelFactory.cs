@@ -1361,9 +1361,12 @@ namespace Nop.Web.Factories
             if (products == null)
                 throw new ArgumentNullException(nameof(products));
 
+            
+
             var models = new List<ProductOverviewModel>();
             foreach (var product in products)
             {
+ 
                 var model = new ProductOverviewModel
                 {
                     Id = product.Id,
@@ -1372,6 +1375,7 @@ namespace Nop.Web.Factories
                     FullDescription = await _localizationService.GetLocalizedAsync(product, x => x.FullDescription),
                     SeName = await _urlRecordService.GetSeNameAsync(product),
                     Sku = product.Sku,
+                  
                     ProductType = product.ProductType,
                     MarkAsNew = product.MarkAsNew &&
                         (!product.MarkAsNewStartDateTimeUtc.HasValue || product.MarkAsNewStartDateTimeUtc.Value < DateTime.UtcNow) &&
@@ -1476,6 +1480,7 @@ namespace Nop.Web.Factories
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
+         
 
             //standard properties
             var model = new ProductDetailsModel
@@ -1496,6 +1501,7 @@ namespace Nop.Web.Factories
                 ManufacturerPartNumber = product.ManufacturerPartNumber,
                 ShowGtin = _catalogSettings.ShowGtin,
                 Gtin = product.Gtin,
+                StockQuantity = product.StockQuantity,
                 ManageInventoryMethod = product.ManageInventoryMethod,
                 StockAvailability = await _productService.FormatStockMessageAsync(product, string.Empty),
                 HasSampleDownload = product.IsDownload && product.HasSampleDownload,

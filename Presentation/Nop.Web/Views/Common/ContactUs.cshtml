@@ -7,6 +7,15 @@
     //page class
     NopHtml.AppendPageCssClassParts("html-contact-page");
 }
+@{
+    var subjectOptions = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Sipariş", Text = "Sipariş" },
+        new SelectListItem { Value = "Öneri", Text = "Öneri" },
+        new SelectListItem { Value = "Şikayet", Text = "Şikayet" },
+        new SelectListItem { Value = "Yardım", Text = "Yardım" }
+    };
+}
 <div class="page contact-page">
     <div class="page-title">
         <h1>@T("PageTitle.ContactUs")</h1>
@@ -42,7 +51,9 @@
                         {
                             <div class="inputs">
                                 <label asp-for="Subject" asp-postfix=":"></label>
-                                <input asp-for="Subject" placeholder="@T("ContactUs.Subject.Hint")" class="subject" />
+                                <select asp-for="Subject" asp-items="subjectOptions" class="contact_tab_subject subject">
+                                    <option value="">@T("ContactUs.Subject.Hint")</option>
+                                </select>
                                 <nop-required />
                                 <span asp-validation-for="Subject"></span>
                             </div>
