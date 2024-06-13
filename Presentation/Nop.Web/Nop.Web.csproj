@@ -124,7 +124,7 @@
     <None Include="Themes\Pavilion\Views\_ViewImports.cshtml" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
     <Reference Include="IPara.DeveloperPortal.Core">
-      <HintPath>..\..\Libraries\Nop.Services\bin\Debug\net7.0\IPara.DeveloperPortal.Core.dll</HintPath>
+      <HintPath>..\..\IPara.DeveloperPortal.Core.dll</HintPath>
     </Reference>
 
     <None Update="Areas\Admin\sitemap.config">
