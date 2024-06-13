@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IPara.DeveloperPortal.Core.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Payments;
+using Nop.Core.Domain.Payments.IPara;
 using Nop.Core.Domain.Security;
 using Nop.Core.Domain.Shipping;
 using Nop.Core.Domain.Tax;
@@ -66,6 +68,7 @@ namespace Nop.Web.Controllers
         private readonly RewardPointsSettings _rewardPointsSettings;
         private readonly ShippingSettings _shippingSettings;
         private readonly TaxSettings _taxSettings;
+        private readonly IParaPaymentService _iParaPaymentService;
 
         #endregion
 
@@ -98,7 +101,8 @@ namespace Nop.Web.Controllers
             PaymentSettings paymentSettings,
             RewardPointsSettings rewardPointsSettings,
             ShippingSettings shippingSettings,
-            TaxSettings taxSettings)
+            TaxSettings taxSettings,
+            IParaPaymentService iParaPaymentService)
         {
             _addressSettings = addressSettings;
             _captchaSettings = captchaSettings;
@@ -128,6 +132,7 @@ namespace Nop.Web.Controllers
             _rewardPointsSettings = rewardPointsSettings;
             _shippingSettings = shippingSettings;
             _taxSettings = taxSettings;
+            _iParaPaymentService = iParaPaymentService;
         }
 
         #endregion
@@ -2167,6 +2172,37 @@ namespace Nop.Web.Controllers
                 await _logger.WarningAsync(exc.Message, exc, await _workContext.GetCurrentCustomerAsync());
                 return Content(exc.Message);
             }
+        }
+
+        [CheckAccessPublicStore(true)]
+        [IgnoreAntiforgeryToken]
+        [HttpPost]
+        public IActionResult IParaFail(IFormCollection form)
+        {
+            TempData["errorpayment"] = JsonConvert.SerializeObject(form["errorMessage"]);
+            return RedirectToRoute("CheckoutPaymentInfo");
+        }
+
+        [CheckAccessPublicStore(true)]
+        [IgnoreAntiforgeryToken]
+        [HttpPost]
+        public IActionResult IParaSuccess(IFormCollection form)
+        {
+            var source = TempData["source"].ToString();
+            var threeDCompleteRequest = JsonConvert.DeserializeObject<ThreeDPaymentCompleteRequest>(source);
+            var response = _iParaPaymentService.ThreeDPaymentComplete(form, threeDCompleteRequest);
+        }
+
+        public IActionResult BankResult()
+        {
+            return View();
+        }
+
+        public IActionResult ThreeDPayment(IParaPaymentRequest iParaPaymentRequest)
+        {
+            var response = _iParaPaymentService.ThreeDPaymentInit(iParaPaymentRequest, HttpContext);
+            TempData["source"] = response;
+            return RedirectToRoute("BankResult");
         }
 
         #endregion

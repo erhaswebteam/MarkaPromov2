@@ -242,6 +242,9 @@ namespace Nop.Web.Framework.Infrastructure
             services.AddScoped<ITaxPluginManager, TaxPluginManager>();
             services.AddScoped<ISearchPluginManager, SearchPluginManager>();
 
+            //ipara
+            services.AddScoped<IParaPaymentService, IParaPaymentManager>();
+
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             //register all settings

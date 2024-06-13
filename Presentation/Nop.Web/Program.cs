@@ -1,13 +1,15 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nop.Core.Configuration;
+using Nop.Core.Domain.Payments.IPara;
 using Nop.Core.Infrastructure;
+using Nop.Services.Payments;
 using Nop.Web.Framework.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Configuration.AddJsonFile(NopConfigurationDefaults.AppSettingsFilePath, true, true);
 if (!string.IsNullOrEmpty(builder.Environment?.EnvironmentName))
@@ -33,6 +35,9 @@ else
         options.ValidateScopes = false;
         options.ValidateOnBuild = true;
     });
+
+builder.Services.Configure<IParaSettings>(builder.Configuration.GetSection("IParaSettings"));
+builder.Services.AddHttpClient<IParaPaymentService>();
 
 //add services to the application and configure service provider
 builder.Services.ConfigureApplicationServices(builder);

@@ -1656,6 +1656,7 @@ namespace Nop.Services.Orders
                     CustomerId = customer.Id
                 };
 
+                customer.ShoppingCartItems.Add(shoppingCartItem);
                 await _sciRepository.InsertAsync(shoppingCartItem);
 
                 //updated "HasShoppingCartItems" property used for performance optimization

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Nop.Core.Domain.Common;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Tax;
 
 namespace Nop.Core.Domain.Customers
@@ -9,6 +11,8 @@ namespace Nop.Core.Domain.Customers
     /// </summary>
     public partial class Customer : BaseEntity, ISoftDeletedEntity
     {
+        private ICollection<ShoppingCartItem> _shoppingCartItems;
+
         public Customer()
         {
             CustomerGuid = Guid.NewGuid();
@@ -257,6 +261,15 @@ namespace Nop.Core.Domain.Customers
         {
             get => TaxDisplayTypeId.HasValue ?(TaxDisplayType)TaxDisplayTypeId : null;
             set => TaxDisplayTypeId = value.HasValue ? (int)value : null;
+        }
+
+        /// <summary>
+        /// Gets or sets shopping cart items
+        /// </summary>
+        public virtual ICollection<ShoppingCartItem> ShoppingCartItems
+        {
+            get => _shoppingCartItems ?? (_shoppingCartItems = new List<ShoppingCartItem>());
+            protected set => _shoppingCartItems = value;
         }
 
         #endregion
