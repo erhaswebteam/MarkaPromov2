@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using IPara.DeveloperPortal.Core.Entity;
 using IPara.DeveloperPortal.Core.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -2190,8 +2191,34 @@ namespace Nop.Web.Controllers
         {
             var source = TempData["source"].ToString();
             var threeDCompleteRequest = JsonConvert.DeserializeObject<ThreeDPaymentCompleteRequest>(source);
-            //var response = _iParaPaymentService.ThreeDPaymentComplete(form, threeDCompleteRequest);
-            return null;
+
+            var customer = _workContext.GetCurrentCustomerAsync().Result;
+            var cart = customer.ShoppingCartItems;
+            foreach (var item in cart)
+            {
+                var prdk = _productService.GetProductByIdAsync(item.ProductId).Result;
+
+                Product p = new Product();
+                p.Title = prdk.Name;
+                p.Code = prdk.Sku;
+                p.Price = prdk.Price.ToString().Replace(",", "").Replace(".", "");
+                p.Quantity = item.Quantity;
+                threeDCompleteRequest.Products.Add(p);
+            }
+
+            var response = _iParaPaymentService.ThreeDPaymentComplete(form, threeDCompleteRequest, threeDCompleteRequest.Products);
+            if (response.Result == "1") 
+            {
+                string logMsg = JsonConvert.SerializeObject(response);
+
+                _logger.InsertLog(Core.Domain.Logging.LogLevel.Information, logMsg);
+                return RedirectToRoute("CheckoutConfirm");
+            }
+            else
+            {
+                TempData["errorpayment"] = JsonConvert.SerializeObject(response.ErrorMessage);
+                return RedirectToRoute("CheckoutPaymentInfo");
+            }
         }
 
         public IActionResult BankResult()

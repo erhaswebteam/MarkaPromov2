@@ -1,13 +1,10 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using IPara.DeveloperPortal.Core;
+﻿using IPara.DeveloperPortal.Core;
 using IPara.DeveloperPortal.Core.Entity;
 using IPara.DeveloperPortal.Core.Request;
 using IPara.DeveloperPortal.Core.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Nop.Core;
-using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Payments.IPara;
 using System;
 using System.Collections.Generic;
@@ -90,7 +87,7 @@ namespace Nop.Services.Payments
             return result;
         }
 
-        public string ThreeDPaymentComplete(IFormCollection form, ThreeDPaymentCompleteRequest threeDPaymentCompleteRequest, List<Product> products)
+        public ThreeDPaymentCompleteResponse ThreeDPaymentComplete(IFormCollection form, ThreeDPaymentCompleteRequest threeDPaymentCompleteRequest, List<Product> products)
         {
             Settings iParaSet = GetSettings();
 
@@ -113,8 +110,8 @@ namespace Nop.Services.Payments
             if (!string.IsNullOrEmpty(form["hash"]))
                 paymentResponse.Hash = form["hash"];
 
-            string result = string.Empty;
             var customer = _workContext.GetCurrentCustomerAsync().Result;
+            ThreeDPaymentCompleteResponse response = new ThreeDPaymentCompleteResponse();
 
             if (Helper.Validate3DReturn(paymentResponse, iParaSet))
             {
@@ -144,18 +141,9 @@ namespace Nop.Services.Payments
 
                 request.Products = products;
 
-                var response = ThreeDPaymentCompleteRequest.Execute(request, iParaSet);
-
-                if (response.Result == "1")
-                {
-                    result = JsonConvert.SerializeObject(response);
-                }
-                else
-                {
-                    result = JsonConvert.SerializeObject(response.ErrorMessage);
-                }
+                response = ThreeDPaymentCompleteRequest.Execute(request, iParaSet);
             }
-            return result;
+            return response;
         }
     }
 }
