@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using IPara.DeveloperPortal.Core;
 using IPara.DeveloperPortal.Core.Entity;
 using IPara.DeveloperPortal.Core.Request;
+using IPara.DeveloperPortal.Core.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Nop.Core;
+using Nop.Core.Domain.Catalog;
 using Nop.Core.Domain.Common;
 using Nop.Core.Domain.Customers;
 using Nop.Core.Domain.Orders;
@@ -33,6 +33,14 @@ using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
 using Nop.Web.Models.Checkout;
 using Nop.Web.Models.Common;
+using Nop.Web.Models.Payment;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Nop.Web.Controllers
 {
@@ -44,7 +52,7 @@ namespace Nop.Web.Controllers
         private readonly AddressSettings _addressSettings;
         private readonly CaptchaSettings _captchaSettings;
         private readonly CustomerSettings _customerSettings;
-        private readonly IAddressAttributeParser _addressAttributeParser;        
+        private readonly IAddressAttributeParser _addressAttributeParser;
         private readonly IAddressModelFactory _addressModelFactory;
         private readonly IAddressService _addressService;
         private readonly ICheckoutModelFactory _checkoutModelFactory;
@@ -70,6 +78,7 @@ namespace Nop.Web.Controllers
         private readonly ShippingSettings _shippingSettings;
         private readonly TaxSettings _taxSettings;
         private readonly IParaPaymentService _iParaPaymentService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #endregion
 
@@ -103,7 +112,8 @@ namespace Nop.Web.Controllers
             RewardPointsSettings rewardPointsSettings,
             ShippingSettings shippingSettings,
             TaxSettings taxSettings,
-            IParaPaymentService iParaPaymentService)
+            IParaPaymentService iParaPaymentService,
+            IHttpContextAccessor httpContextAccessor)
         {
             _addressSettings = addressSettings;
             _captchaSettings = captchaSettings;
@@ -134,6 +144,7 @@ namespace Nop.Web.Controllers
             _shippingSettings = shippingSettings;
             _taxSettings = taxSettings;
             _iParaPaymentService = iParaPaymentService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -261,7 +272,7 @@ namespace Nop.Web.Controllers
 
                     throw new Exception(errors);
                 }
-                
+
                 var customer = await _workContext.GetCurrentCustomerAsync();
                 var store = await _storeContext.GetCurrentStoreAsync();
                 var cart = await _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart, store.Id);
@@ -277,7 +288,7 @@ namespace Nop.Web.Controllers
                 var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
                 var customAttributeWarnings = await _addressAttributeParser.GetAttributeWarningsAsync(customAttributes);
 
-                if (customAttributeWarnings.Any()) 
+                if (customAttributeWarnings.Any())
                     return Json(new { error = 1, message = customAttributeWarnings });
 
                 address = addressModel.ToEntity(address);
@@ -504,7 +515,7 @@ namespace Nop.Web.Controllers
         {
             return await DeleteAddressAsync(addressId, async (cart) =>
             {
-                if (!opc) 
+                if (!opc)
                     return Json(new { redirect = Url.RouteUrl("CheckoutBillingAddress") });
 
                 var billingAddressModel = await _checkoutModelFactory.PrepareBillingAddressModelAsync(cart);
@@ -532,7 +543,7 @@ namespace Nop.Web.Controllers
                     return Json(new { redirect = Url.RouteUrl("CheckoutShippingAddress") });
 
                 var shippingAddressModel = await _checkoutModelFactory.PrepareShippingAddressModelAsync(cart);
-                
+
                 return Json(new
                 {
                     update_section = new UpdateSectionJsonModel
@@ -575,7 +586,7 @@ namespace Nop.Web.Controllers
                 });
             });
         }
-        
+
         #endregion
 
         #region Methods (multistep checkout)
@@ -2011,11 +2022,11 @@ namespace Nop.Web.Controllers
             {
                 var customer = await _workContext.GetCurrentCustomerAsync();
 
-                var isCaptchaSettingEnabled = await _customerService.IsGuestAsync(customer) && 
+                var isCaptchaSettingEnabled = await _customerService.IsGuestAsync(customer) &&
                     _captchaSettings.Enabled && _captchaSettings.ShowOnCheckoutPageForGuests;
 
                 var confirmOrderModel = new CheckoutConfirmModel()
-                { 
+                {
                     DisplayCaptcha = isCaptchaSettingEnabled
                 };
 
@@ -2189,48 +2200,166 @@ namespace Nop.Web.Controllers
         [HttpPost]
         public IActionResult IParaSuccess(IFormCollection form)
         {
-            var source = TempData["source"].ToString();
-            var threeDCompleteRequest = JsonConvert.DeserializeObject<ThreeDPaymentCompleteRequest>(source);
+            Settings iParaSet = _iParaPaymentService.GetSettings();
 
-            var customer = _workContext.GetCurrentCustomerAsync().Result;
-            var cart = customer.ShoppingCartItems;
-            foreach (var item in cart)
+            var orderId = form["orderId"].ToString().Split("_");
+
+            Customer customer = _customerService.GetCustomerByIdAsync(int.Parse(orderId[1])).Result;
+
+            var paymentInfoAttribute = _genericAttributeService.GetAttributeAsync<string>(customer, "PaymentInfo", _storeContext.GetCurrentStore().Id).Result;
+            var paymentInfoModel = JsonConvert.DeserializeObject<PaymentInfoModel>(paymentInfoAttribute);
+
+            ThreeDPaymentInitResponse paymentResponse = new ThreeDPaymentInitResponse();
+            paymentResponse.OrderId = orderId[0];
+            paymentResponse.Result = form["result"];
+            paymentResponse.Amount = form["amount"];
+            paymentResponse.Mode = form["mode"];
+            if (!string.IsNullOrEmpty(form["errorCode"]))
+                paymentResponse.ErrorCode = form["errorCode"];
+
+            if (!string.IsNullOrEmpty(form["errorMessage"]))
+                paymentResponse.ErrorMessage = form["errorMessage"];
+
+            if (!string.IsNullOrEmpty(form["transactionDate"]))
+                paymentResponse.TransactionDate = form["transactionDate"];
+
+            if (!string.IsNullOrEmpty(form["hash"]))
+                paymentResponse.Hash = form["hash"];
+
+            var hashString = paymentResponse.OrderId + paymentResponse.Result + paymentResponse.Amount + paymentResponse.Mode + paymentResponse.ErrorCode + paymentResponse.ErrorMessage + paymentResponse.TransactionDate + iParaSet.PublicKey + iParaSet.PrivateKey;
+            paymentResponse.Hash = CommonHelper.ComputeHash(hashString);
+
+            if (Helper.Validate3DReturn(paymentResponse, iParaSet))
             {
-                var prdk = _productService.GetProductByIdAsync(item.ProductId).Result;
+                var request = new ThreeDPaymentCompleteRequest();
 
-                Product p = new Product();
-                p.Title = prdk.Name;
-                p.Code = prdk.Sku;
-                p.Price = prdk.Price.ToString().Replace(",", "").Replace(".", "");
-                p.Quantity = item.Quantity;
-                threeDCompleteRequest.Products.Add(p);
-            }
+                #region Request New
+                request.OrderId = form["orderId"];
+                request.Echo = "Echo";
+                request.Mode = iParaSet.Mode;
+                request.Amount = form["amount"]; // 100 tL
+                request.CardOwnerName = paymentInfoModel.CardholderName;
+                request.CardNumber = paymentInfoModel.CardNumber.Replace(" ", "");
+                request.CardExpireMonth = paymentInfoModel.ExpireMonth;
+                request.CardExpireYear = paymentInfoModel.ExpireYear;
+                request.Installment = "1";
+                request.Cvc = paymentInfoModel.CardCode;
+                request.ThreeD = "true";
+                request.ThreeDSecureCode = form["threeDSecureCode"];
+                #endregion
 
-            var response = _iParaPaymentService.ThreeDPaymentComplete(form, threeDCompleteRequest, threeDCompleteRequest.Products);
-            if (response.Result == "1") 
-            {
-                string logMsg = JsonConvert.SerializeObject(response);
+                #region Sipariş veren bilgileri
+                request.Purchaser = new Purchaser();
+                request.Purchaser.Name = paymentInfoModel.CardholderName.Split(' ')[0];
+                request.Purchaser.SurName = paymentInfoModel.CardholderName ?? paymentInfoModel.CardholderName.Substring(paymentInfoModel.CardholderName.IndexOf(' '));
+                request.Purchaser.Email = customer.Email;
+                #endregion
 
-                _logger.InsertLog(Core.Domain.Logging.LogLevel.Information, logMsg);
-                return RedirectToRoute("CheckoutConfirm");
+                request.Products = new List<IPara.DeveloperPortal.Core.Entity.Product>();
+                var cart = _orderService.GetOrderItemsAsync(int.Parse(orderId[0])).Result;
+                foreach (var item in cart)
+                {
+                    var currentProduct = _productService.GetProductByIdAsync(item.ProductId).Result;
+
+                    IPara.DeveloperPortal.Core.Entity.Product product = new IPara.DeveloperPortal.Core.Entity.Product();
+                    product.Title = currentProduct.Name;
+                    product.Code = currentProduct.Sku;
+                    product.Price = currentProduct.Price.ToString().Replace(",", "").Replace(".", "");
+                    product.Quantity = item.Quantity;
+                    request.Products.Add(product);
+                }
+
+                var response = ThreeDPaymentCompleteRequest.Execute(request, iParaSet);
+                if (response.Result == "1")
+                {
+                    string logMsg = JsonConvert.SerializeObject(response);
+
+                    _logger.InsertLog(Core.Domain.Logging.LogLevel.Information, logMsg);
+
+                    _genericAttributeService.DeleteAttributeAsync(new GenericAttribute { Key = "PaymentInfo" });
+
+                    var orderResponse = _orderService.GetOrderByIdAsync(int.Parse(orderId[0])).Result;
+                    orderResponse.OrderStatus = OrderStatus.Processing;
+                    orderResponse.OrderStatusId = 20;
+                    orderResponse.PaymentStatus = PaymentStatus.Paid;
+                    orderResponse.PaymentStatusId = 30;
+                    _orderService.UpdateOrderAsync(orderResponse);
+                    var shoppingCart = _shoppingCartService.GetShoppingCartAsync(customer).Result;
+                    foreach (var item in shoppingCart)
+                    {
+                        _shoppingCartService.DeleteShoppingCartItemAsync(item);
+                    }
+                    customer.HasShoppingCartItems = false;
+                    _customerService.UpdateCustomerAsync(customer);
+
+                    return RedirectToAction("Completed", new { orderId = int.Parse(orderId[0]) });
+                }
+                else
+                {
+                    TempData["errorpayment"] = JsonConvert.SerializeObject(response.ErrorMessage);
+                    return RedirectToRoute("CheckoutPaymentInfo");
+                }
             }
             else
             {
-                TempData["errorpayment"] = JsonConvert.SerializeObject(response.ErrorMessage);
+                TempData["errorpayment"] = JsonConvert.SerializeObject(form["errorMessage"]);
                 return RedirectToRoute("CheckoutPaymentInfo");
             }
         }
 
-        public IActionResult BankResult()
+        [HttpPost]
+        public IActionResult ThreeDPayment(PaymentInfoModel paymentInfoModel)
         {
-            return View();
-        }
+            var customer = _workContext.GetCurrentCustomerAsync().Result;
+            Settings iParaSet = _iParaPaymentService.GetSettings();
 
-        public IActionResult ThreeDPayment(IParaPaymentRequest iParaPaymentRequest)
-        {
-            var response = _iParaPaymentService.ThreeDPaymentInit(iParaPaymentRequest, HttpContext);
-            TempData["source"] = response;
-            return RedirectToRoute("BankResult");
+            var httpRequest = HttpContext.Request;
+            var host = httpRequest.Host.ToString(); // Hostname ve port
+            var scheme = httpRequest.Scheme; // http veya https
+            var pathBase = httpRequest.PathBase.ToString(); // Uygulama temel yolu
+            var baseUrl = $"{scheme}://{host}{pathBase}";
+
+            var orders = _orderService.SearchOrdersAsync(customerId: customer.Id).Result;
+            var order = orders.FirstOrDefault();
+
+            var request = new ThreeDPaymentInitRequest();
+            request.OrderId = order.Id.ToString() + "_" + customer.Id.ToString() + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss");
+            request.Echo = "Echo";
+            request.Mode = iParaSet.Mode;
+            request.Version = iParaSet.Version;
+            request.Amount = order.OrderTotal.ToString("F").Replace(",", "").Replace(".", "");
+            request.CardOwnerName = paymentInfoModel.CardholderName;
+            request.CardNumber = paymentInfoModel.CardNumber.Replace(" ", "");
+            request.CardExpireMonth = paymentInfoModel.ExpireMonth;
+            request.CardExpireYear = paymentInfoModel.ExpireYear.Substring(2);
+            request.Installment = "1";
+            request.Cvc = paymentInfoModel.CardCode;
+
+            request.PurchaserName = paymentInfoModel.CardholderName.Split(' ')[0];
+            request.PurchaserSurname = paymentInfoModel.CardholderName ?? paymentInfoModel.CardholderName.Substring(paymentInfoModel.CardholderName.IndexOf(' '));
+            request.PurchaserEmail = customer.Email;
+
+#if DEBUG
+            //test
+            request.SuccessUrl = baseUrl + "/Checkout/IParaSuccess"; //"https://localhost:7181/Checkout/IParaSuccess";
+            request.FailUrl = baseUrl + "/Checkout/IParaFail";//"https://localhost:7181/Checkout/IParaFail";
+#endif
+
+#if RELEASE
+            //canlı
+            //Ssl olsun mu
+            var storeLocation = _webHelper.GetStoreLocation(true);
+      
+            request.SuccessUrl = $"{storeLocation}Checkout/IParaSuccess";
+            request.FailUrl = $"{storeLocation}Checkout/IParaFail";
+#endif
+
+            var paymentInfo = JsonConvert.SerializeObject(paymentInfoModel);
+            _genericAttributeService.SaveAttributeAsync(customer, "PaymentInfo", paymentInfo, _storeContext.GetCurrentStore().Id);
+
+            var result = ThreeDPaymentInitRequest.Execute(request, iParaSet);
+            ViewBag.Source = result;
+            return View();
         }
 
         #endregion

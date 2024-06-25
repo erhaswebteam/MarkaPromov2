@@ -696,6 +696,18 @@ namespace Nop.Web.Infrastructure
                 pattern: $"{lang}/page-not-found",
                 defaults: new { controller = "Common", action = "PageNotFound" });
 
+            endpointRouteBuilder.MapControllerRoute("ThreeDPayment", "ThreeDPayment",
+                new { controller = "Checkout", action = "ThreeDPayment" });
+
+            endpointRouteBuilder.MapControllerRoute("IParaSuccess", "IParaSuccess",
+                new { controller = "Checkout", action = "IParaSuccess" });
+
+            endpointRouteBuilder.MapControllerRoute("IParaFail", "IParaFail",
+                new { controller = "Checkout", action = "IParaFail" });
+
+            endpointRouteBuilder.MapControllerRoute("BankResult", "BankResult",
+                new { controller = "Checkout", action = "BankResult" });
+
             //fallback is intended to handle cases when no other endpoint has matched
             //we use it to invoke [CheckLanguageSeoCode] and give a chance to find a localized route
             endpointRouteBuilder.MapFallbackToController("FallbackRedirect", "Common");

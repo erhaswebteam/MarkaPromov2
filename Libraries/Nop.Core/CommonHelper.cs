@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using Nop.Core.Infrastructure;
 
@@ -317,6 +319,14 @@ namespace Nop.Core
             }
             catch { }
             return date;
+        }
+
+        public static string ComputeHash(string hashString)
+        {
+            HashAlgorithm hashAlgorithm = new SHA1Managed();
+            byte[] bytes = Encoding.UTF8.GetBytes(hashString);
+            byte[] inArray = hashAlgorithm.ComputeHash(bytes);
+            return Convert.ToBase64String(inArray);
         }
 
         #endregion

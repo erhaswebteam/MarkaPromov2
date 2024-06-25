@@ -1656,7 +1656,6 @@ namespace Nop.Services.Orders
                     CustomerId = customer.Id
                 };
 
-                customer.ShoppingCartItems.Add(shoppingCartItem);
                 await _sciRepository.InsertAsync(shoppingCartItem);
 
                 //updated "HasShoppingCartItems" property used for performance optimization
@@ -1928,7 +1927,6 @@ namespace Nop.Services.Orders
 
             return (string.Empty, rezCycleLength, rezCyclePeriod, rezTotalCycles);
         }
-
         #endregion
     }
 }

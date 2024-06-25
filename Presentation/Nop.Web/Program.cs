@@ -37,7 +37,7 @@ else
     });
 
 builder.Services.Configure<IParaSettings>(builder.Configuration.GetSection("IParaSettings"));
-builder.Services.AddHttpClient<IParaPaymentService>();
+builder.Services.AddHttpClient<IParaPaymentService, IParaPaymentManager>();
 
 //add services to the application and configure service provider
 builder.Services.ConfigureApplicationServices(builder);
