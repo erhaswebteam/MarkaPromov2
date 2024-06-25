@@ -9,6 +9,8 @@
 @inject IStoreContext storeContext
 @inject IWorkContext workContext
 
+<link href="~/lib_npm/@@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+<link href="~/lib_npm/@@fortawesome/fontawesome-free/css/fontawesome.min.css" rel="stylesheet" />
 <style>
     .footer-middle .center {
         display: flex;
@@ -104,7 +106,9 @@
                     }
                     <li><a href="/filterSearch">@T("Common.Search")</a></li>
                     <li><a href="/recentlyviewedproducts">@T("SevenSpikes.Themes.Pavilion.Footer.RecentylViewedProducts")</a></li>
-                    <li class="phone"><span>@T("SevenSpikes.Themes.Pavilion.Footer.Phone")</span></li>
+                    <li class="phone">
+                        <i class="fa fa-phone-alt" style="color:red"></i>&nbsp;&nbsp;&nbsp; @T("SevenSpikes.Themes.Pavilion.Footer.Phone")
+                    </li>
                     <li class="email">
                         <a href="mailto:info@markapromo.com">
                             <span>@T("SevenSpikes.Themes.Pavilion.Footer.Email")</span>
