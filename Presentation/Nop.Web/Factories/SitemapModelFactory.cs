@@ -282,12 +282,20 @@ namespace Nop.Web.Factories
         /// A task that represents the asynchronous operation
         /// The task result contains the sitemap URLs
         /// </returns>
+        //protected virtual async Task<IEnumerable<SitemapUrlModel>> GetProductUrlsAsync()
+        //{
+        //    var store = await _storeContext.GetCurrentStoreAsync();
+
+        //    return await (await _productService.SearchProductsAsync(0, storeId: store.Id,
+        //        visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn))
+        //        .SelectAwait(async product => await PrepareLocalizedSitemapUrlAsync("Product", GetSeoRouteParamsAwait(product), product.UpdatedOnUtc)).ToListAsync();
+        //}
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetProductUrlsAsync()
         {
             var store = await _storeContext.GetCurrentStoreAsync();
 
             return await (await _productService.SearchProductsAsync(0, storeId: store.Id,
-                visibleIndividuallyOnly: true, orderBy: ProductSortingEnum.CreatedOn))
+                visibleIndividuallyOnly: true))
                 .SelectAwait(async product => await PrepareLocalizedSitemapUrlAsync("Product", GetSeoRouteParamsAwait(product), product.UpdatedOnUtc)).ToListAsync();
         }
 
