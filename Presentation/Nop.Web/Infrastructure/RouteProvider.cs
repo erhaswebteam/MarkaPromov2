@@ -705,9 +705,6 @@ namespace Nop.Web.Infrastructure
             endpointRouteBuilder.MapControllerRoute("IParaFail", "IParaFail",
                 new { controller = "Checkout", action = "IParaFail" });
 
-            endpointRouteBuilder.MapControllerRoute("BankResult", "BankResult",
-                new { controller = "Checkout", action = "BankResult" });
-
             //fallback is intended to handle cases when no other endpoint has matched
             //we use it to invoke [CheckLanguageSeoCode] and give a chance to find a localized route
             endpointRouteBuilder.MapFallbackToController("FallbackRedirect", "Common");
