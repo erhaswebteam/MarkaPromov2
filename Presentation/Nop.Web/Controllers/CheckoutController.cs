@@ -15,6 +15,7 @@ using Nop.Core.Domain.Payments;
 using Nop.Core.Domain.Payments.IPara;
 using Nop.Core.Domain.Security;
 using Nop.Core.Domain.Shipping;
+using Nop.Core.Domain.Stores;
 using Nop.Core.Domain.Tax;
 using Nop.Core.Http.Extensions;
 using Nop.Services.Catalog;
@@ -79,6 +80,7 @@ namespace Nop.Web.Controllers
         private readonly TaxSettings _taxSettings;
         private readonly IParaPaymentService _iParaPaymentService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
 
         #endregion
 
@@ -113,7 +115,8 @@ namespace Nop.Web.Controllers
             ShippingSettings shippingSettings,
             TaxSettings taxSettings,
             IParaPaymentService iParaPaymentService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IOrderTotalCalculationService orderTotalCalculationService)
         {
             _addressSettings = addressSettings;
             _captchaSettings = captchaSettings;
@@ -145,6 +148,7 @@ namespace Nop.Web.Controllers
             _taxSettings = taxSettings;
             _iParaPaymentService = iParaPaymentService;
             _httpContextAccessor = httpContextAccessor;
+            _orderTotalCalculationService = orderTotalCalculationService;
         }
 
         #endregion
@@ -2191,7 +2195,7 @@ namespace Nop.Web.Controllers
         [HttpPost]
         public IActionResult IParaFail(IFormCollection form)
         {
-            TempData["errorpayment"] = JsonConvert.SerializeObject(form["errorMessage"]);
+            ViewBag.ErrorPayment = JsonConvert.SerializeObject(form["errorMessage"]);
             return RedirectToRoute("CheckoutPaymentInfo");
         }
 
@@ -2277,13 +2281,18 @@ namespace Nop.Web.Controllers
                     _logger.InsertLog(Core.Domain.Logging.LogLevel.Information, logMsg);
 
                     _genericAttributeService.DeleteAttributeAsync(new GenericAttribute { Key = "PaymentInfo" });
-
-                    var orderResponse = _orderService.GetOrderByIdAsync(int.Parse(orderId[0])).Result;
-                    orderResponse.OrderStatus = OrderStatus.Processing;
-                    orderResponse.OrderStatusId = 20;
-                    orderResponse.PaymentStatus = PaymentStatus.Paid;
-                    orderResponse.PaymentStatusId = 30;
-                    _orderService.UpdateOrderAsync(orderResponse);
+                    var store = _storeContext.GetCurrentStore();
+                    var processPaymentRequest = new ProcessPaymentRequest();
+                    _paymentService.GenerateOrderGuid(processPaymentRequest);
+                    processPaymentRequest.StoreId = store.Id;
+                    processPaymentRequest.CustomerId = customer.Id;
+                    processPaymentRequest.PaymentMethodSystemName = _genericAttributeService.GetAttributeAsync<string>(customer,
+                        NopCustomerDefaults.SelectedPaymentMethodAttribute, store.Id).Result;
+                    HttpContext.Session.Set<ProcessPaymentRequest>("OrderPaymentInfo", processPaymentRequest);
+                    var placeOrderResult = _orderProcessingService.PlaceOrderAsync(processPaymentRequest).Result;
+                    placeOrderResult.PlacedOrder.PaymentStatusId = (int)PaymentStatus.Paid;
+                    placeOrderResult.PlacedOrder.OrderStatusId = (int)OrderStatus.Processing;
+                    _orderService.UpdateOrderAsync(placeOrderResult.PlacedOrder);
                     var shoppingCart = _shoppingCartService.GetShoppingCartAsync(customer).Result;
                     foreach (var item in shoppingCart)
                     {
@@ -2292,7 +2301,7 @@ namespace Nop.Web.Controllers
                     customer.HasShoppingCartItems = false;
                     _customerService.UpdateCustomerAsync(customer);
 
-                    return RedirectToAction("Completed", new { orderId = int.Parse(orderId[0]) });
+                    return RedirectToAction("Completed", new { orderId = placeOrderResult.PlacedOrder.Id });
                 }
                 else
                 {
@@ -2321,22 +2330,25 @@ namespace Nop.Web.Controllers
 
             var orders = _orderService.SearchOrdersAsync(customerId: customer.Id).Result;
             var order = orders.FirstOrDefault();
+            var cart = _shoppingCartService.GetShoppingCartAsync(customer, ShoppingCartType.ShoppingCart).Result;
+            var total = _orderTotalCalculationService.GetShoppingCartTotalAsync(cart).Result;
 
             var request = new ThreeDPaymentInitRequest();
             request.OrderId = order.Id.ToString() + "_" + customer.Id.ToString() + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss");
             request.Echo = "Echo";
             request.Mode = iParaSet.Mode;
             request.Version = iParaSet.Version;
-            request.Amount = order.OrderTotal.ToString("F").Replace(",", "").Replace(".", "");
+            request.Amount = total.shoppingCartTotal.Value.ToString("F").Replace(",", "").Replace(".", "");
             request.CardOwnerName = paymentInfoModel.CardholderName;
             request.CardNumber = paymentInfoModel.CardNumber.Replace(" ", "");
-            request.CardExpireMonth = paymentInfoModel.ExpireMonth;
+            request.CardExpireMonth = paymentInfoModel.ExpireMonth.Length == 1 ? "0" + paymentInfoModel.ExpireMonth : paymentInfoModel.ExpireMonth;
             request.CardExpireYear = paymentInfoModel.ExpireYear.Substring(2);
             request.Installment = "1";
             request.Cvc = paymentInfoModel.CardCode;
 
             request.PurchaserName = paymentInfoModel.CardholderName.Split(' ')[0];
-            request.PurchaserSurname = paymentInfoModel.CardholderName ?? paymentInfoModel.CardholderName.Substring(paymentInfoModel.CardholderName.IndexOf(' '));
+            request.PurchaserSurname = paymentInfoModel.CardholderName.Split(' ').Length > 1 
+                ? paymentInfoModel.CardholderName.Substring(paymentInfoModel.CardholderName.IndexOf(' ')) : "";
             request.PurchaserEmail = customer.Email;
 
 #if DEBUG
