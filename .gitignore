@@ -31,3 +31,16 @@ Presentation/Nop.Web.Framework/obj
 .vs
 Presentation/Nop.Web/obj
 Presentation/Nop.Web/obj/Debug
+Plugins/Nop.Plugin.Shipping.FixedByWeightByTotal/obj
+Plugins/Nop.Plugin.Tax.Avalara/obj
+Plugins/Nop.Plugin.Tax.FixedOrByCountryStateZip/obj
+Plugins/Nop.Plugin.Widgets.FacebookPixel/obj
+Plugins/Nop.Plugin.Widgets.GoogleAnalytics/obj
+Plugins/Nop.Plugin.Widgets.NivoSlider/obj
+Plugins/Nop.Plugin.Widgets.What3words/obj
+Presentation/Nop.Web/obj
+Presentation/Nop.Web/Plugins
+Presentation/Nop.Web/obj/Nop.Web.csproj.nuget.dgspec.json
+Presentation/Nop.Web/obj/Nop.Web.csproj.nuget.g.props
+Presentation/Nop.Web/obj/project.assets.json
+Presentation/Nop.Web/obj/project.nuget.cache
