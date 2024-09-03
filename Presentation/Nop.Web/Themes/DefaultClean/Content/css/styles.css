@@ -987,7 +987,8 @@ label, label + * {
 }
 
 .header-logo a {
-  display: inline-block;
+  /*display: flex;*/
+  padding-right:84%;
   max-width: 100%;
   line-height: 0; /*firefox line-height bug fix*/
 }

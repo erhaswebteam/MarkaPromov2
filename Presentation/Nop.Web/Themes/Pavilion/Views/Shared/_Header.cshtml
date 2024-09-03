@@ -21,7 +21,7 @@
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderBefore })
 
     <div class="header-upper">
-        <div class="center">
+        <div class="contentpage">
             @await Component.InvokeAsync(typeof(AdminHeaderLinksViewComponent))
             @{
                 var taxTypeSelectorHtml = await Component.InvokeAsync(typeof(TaxTypeSelectorViewComponent));
@@ -54,35 +54,24 @@
     </div>
 
     <div class="header-middle">
-        <div class="center">
+        <div class="contentpage">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
             <div class="header-logo">
                 @await Component.InvokeAsync(typeof(LogoViewComponent))
             </div>
-            <div class="header-menu-parent">
-                <div class="header-menu @if (showCategoriesInSideMenu){<text>categories-in-side-panel</text>}">
-                    <div class="close-menu">
-                        <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
-                    </div>
-                    @{
-                        var menuHtml = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
-                    }
-                    @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
-                    {
-                        @menuHtml
-                    }
-                    else
-                    {
-                        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
-                    }
-                </div>
+            <div class="search-box store-search-box @if (!showCategoriesInSideMenu){<text>full-width</text>}">
+                @await Component.InvokeAsync(typeof(SearchBoxViewComponent))
             </div>
+         <div>
             @await Component.InvokeAsync(typeof(FlyoutShoppingCartViewComponent))
+            </div>
+            </div>
         </div>
     </div>
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderAfter })
     
     <div class="header-lower">
-        <div class="center">
+        
             @if (showCategoriesInSideMenu)
             {
                 <span class="category-navigation-title">@T("SevenSpikes.Themes.Pavilion.Header.AllCategories")</span>
@@ -94,12 +83,39 @@
                     </div>
                 }
             }
-            <div class="search-box store-search-box @if (!showCategoriesInSideMenu){<text>full-width</text>}">
-                @await Component.InvokeAsync(typeof(SearchBoxViewComponent))
-            </div>
-        </div>
+
+            <div class="header-menu-parent">
+                <div class="header-menu" >
+                    <div class="close-menu">
+                    
+                        <span>@T("SevenSpikes.Themes.Common.CloseMenu")</span>
+                 
+                    </div>
+
+                @{
+                    var menuHtml = await Component.InvokeAsync("Widget", new { widgetZone = "theme_header_menu" });
+                }
+                @if (!String.IsNullOrEmpty(await menuHtml.RenderHtmlContentAsync()))
+                {
+                    @menuHtml
+                }
+                else
+                {
+                    @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+                }
+
+
+                </div>
+
+            </div> 
+            
+        
+        
     </div>
+
 </div>
+
+
 
 @if (isHomePage)
 {
@@ -112,17 +128,17 @@
             @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_search_widget" })
         }
 
-        <div class="center">
-            <div class="two-columns-area-left">
+        <div class="contentpage" >
+             <div class="two-columns-area-left">
                 @if (showCategoriesInSideMenu && !isHomeSliderFullWidth)
                 {
                     <div class="category-navigation-list-wrapper">
-                        <ul class="category-navigation-list @if (stickyCategoryMenuFlyout){<text>sticky-flyout</text>}"></ul>
+                                <ul class="category-navigation-list "></ul>
                     </div>
                 }
                 @await Component.InvokeAsync("Widget", new { widgetZone = "homepage_sidebar_after" })
-            </div>
-            <div class="two-columns-area-right">
+            </div> 
+            <div class="two-columns-area-center" >
                 @if (!isHomeSliderFullWidth)
                 {
                     @await Component.InvokeAsync("Widget", new { widgetZone = "home_page_main_slider" });

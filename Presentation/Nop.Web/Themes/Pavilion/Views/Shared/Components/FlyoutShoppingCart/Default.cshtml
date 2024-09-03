@@ -4,11 +4,13 @@
 
 <div class="flyout-cart-wrapper" id="flyout-cart">
     <a href="@Url.RouteUrl("ShoppingCart")" class="cart-trigger">
+      
         <span class="cart-qty">@T("ShoppingCart.HeaderQuantity", Model.TotalProducts)</span>
         <span class="cart-label">@T("SevenSpikes.Themes.Pavilion.Flyout.Cart")</span>
+        <span class="cart-arrow" id="cart-arrow">▲</span>
         @if (!string.IsNullOrEmpty(Model.SubTotal))
         {
-            <span class="cart-ttl">- @Model.SubTotal</span>
+            <span class="cart-ttl">@Model.SubTotal</span>
         }
     </a>
     <div class="flyout-cart">
@@ -84,3 +86,35 @@
         }
     </script>
 </div>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const cartTrigger = document.querySelector('.cart-trigger');
+        const flyoutCart = document.querySelector('.flyout-cart');
+        const cartArrow = document.getElementById('cart-arrow');
+
+        if (cartTrigger) {
+            cartTrigger.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                if (flyoutCart.style.display === 'block') {
+                    flyoutCart.style.display = 'none';
+                    cartArrow.textContent = '▲'; 
+                } else {
+                    flyoutCart.style.display = 'block';
+                    cartArrow.textContent = '▼'; 
+                }
+            });
+        }
+
+        document.addEventListener('click', function (e) {
+            if (!cartTrigger.contains(e.target) && !flyoutCart.contains(e.target)) {
+                flyoutCart.style.display = 'none';
+                cartArrow.textContent = '▲'; 
+            }
+        });
+
+        flyoutCart.style.display = 'none';
+    });
+
+    
+</script>

@@ -55,7 +55,7 @@
 
                 if (e.isInitialLoad === false) {
                     // desktop
-                    searchBox.detach().appendTo('.header-lower .center');
+                    searchBox.detach().appendTo('.header-lower .center .searchMargin');
                     headerLinks.detach().appendTo('.header-links-wrapper');
                     if (headerSelectors != undefined && headerSelectors.length > 0) {
                         headerSelectors.detach().appendTo('.header-selectors-wrapper');
