@@ -230,8 +230,8 @@
 	padding: 0 0 0 24px;
 	vertical-align: middle;
 }
-
-	.header-menu-parent {
+/*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaağğğğğğğğğğğğğğğğğ*/
+	.header-menu-parent { 
 		display: table-cell;
 		vertical-align: middle;
 		
@@ -245,7 +245,7 @@
 	font-size: 0;
 }
 .header-menu > ul > li {
-	display: inline-block;
+	display: flex;
 	vertical-align: middle;
 	
 }

@@ -247,12 +247,9 @@
 	}
 
 	.header-menu {
-		position: relative;
-		text-align: center; 
-		white-space: nowrap; 
-		display: flex;
-		justify-content: center;
-		width: 100%;
+		text-align:center;
+		padding-right:8.3%;
+		padding-left:8.3%;
 	
 	}
 
@@ -304,6 +301,7 @@
 						color: #00a1b1;
 						font-size: 12px;
 					}
+
 					/*.header-menu-parent {
 	display: table-cell;
 	vertical-align: middle
@@ -888,11 +886,12 @@
 					top: 0 !important;
 				}
 
-		.store-search-box {
-			float: right;
-			clear: right;
-			margin: 0;
-		}
+	.store-search-box {
+		float: right;
+		clear: right;
+		margin: 0;
+		margin-right: 9rem;
+	}
 
 			.store-search-box .search-box-button {
 				margin: 0 0 0 5px;

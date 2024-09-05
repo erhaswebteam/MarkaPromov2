@@ -6398,10 +6398,20 @@ td.footable-first-column {
 }
 
 .contentpage {
-	padding-right: 8%;
+	padding-right: 8.3%;
 	padding-left: 8%;
 }
 
 .searchMargin{
 	margin-right: 10%
+}
+
+.daj{
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+}
+
+.productItems{
+	margin-right:300px !important;
 }
