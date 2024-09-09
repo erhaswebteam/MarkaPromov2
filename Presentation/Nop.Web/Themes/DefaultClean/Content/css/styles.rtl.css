@@ -162,6 +162,7 @@ label, label + * {
 .master-column-wrapper {
   position: relative;
   z-index: 0;
+
 }
 
 .master-column-wrapper:after {
@@ -1516,6 +1517,7 @@ label, label + * {
 
 .breadcrumb ul {
   font-size: 0;
+ 
 }
 
 .breadcrumb li {

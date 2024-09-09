@@ -56,7 +56,7 @@
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentBefore })
 		@await Component.InvokeAsync("Widget", new { widgetZone = "pavilion_color_squares" })
 
-        <div class="master-column-wrapper">
+        <div class="master-column-wrapper pageWidth">
             @RenderBody()
         </div>
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentAfter })

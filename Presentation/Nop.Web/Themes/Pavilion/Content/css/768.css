@@ -175,9 +175,13 @@
 
 /* CATEGORY PAGE & GRIDS */
 
-.product-selectors {
-	text-align: left;
-}
+	.product-selectors {
+		text-align: left;
+		background-color: white;
+		padding-left: 25px;
+		padding-right: 25px;
+		border: 1px solid #ddd;
+	}
 .product-selectors > div {
 	margin: 0 20px 0 0;
 }

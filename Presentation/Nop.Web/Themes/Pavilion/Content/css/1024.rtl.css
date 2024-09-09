@@ -462,10 +462,13 @@
 .category-navigation-list > li:first-child > .sublist-wrap {
 	top: 0;
 }
-.category-navigation-list > li:hover > .sublist-wrap,
-.header-menu > ul > li:hover > .sublist-wrap { /*this is the flyout opening*/
-	display: block;
-}
+	.category-navigation-list > li:hover > .sublist-wrap,
+	.header-menu > ul > li:hover > .sublist-wrap { /*this is the flyout opening*/
+		display: block;
+		margin-left: -1.5%;
+		margin-top: 5%;
+		width: max-content;
+	}
 .category-navigation-list > li > .sublist-wrap > .sublist,
 .header-menu > ul > li > .sublist-wrap > .sublist { /*this is the inner list inside the flyout panel*/
 	overflow: hidden;

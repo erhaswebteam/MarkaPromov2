@@ -1,10 +1,11 @@
 ﻿@media all and (min-width: 1025px) {
 
 /* GLOBAL STYLES */
-
+/***************************************************************************************************************************************************************************************/
 .master-wrapper-content {
-	width: 980px;
+	width: 1350px;
 	min-height: 300px;
+	padding-left:50px;
 	margin: auto;
 }
 .customer-pages-body .master-wrapper-content {
@@ -293,6 +294,7 @@
 				.header-menu > ul > li:hover,
 				.header-menu > ul > li:hover {
 					background-color: white;
+					position:static;
 					
 					
 				}
@@ -748,12 +750,13 @@
 			margin: -31px 0 0;
 		}
 
-		.category-navigation-list {
-			display: flex !important;
-			/*border: 1px solid #e9e9e9;*/
-			box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
-			/*background-color: #fff;*/
-		}
+	.category-navigation-list {
+		display: flex !important;
+		/*border: 1px solid #e9e9e9;*/
+		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+		position: relative !important;
+		/*background-color: #fff;*/
+	}
 
 		.home-page-body .category-navigation-list {
 			position: relative; /*prevent flyout z-index conflict*/
@@ -803,38 +806,68 @@
 			display: none; /*store locator in side panel always hidden*/
 		}
 
-		.category-navigation-list > li > .sublist-wrap,
-		.header-menu > ul > li > .sublist-wrap { /*this is the flyout panel*/
-			display: none;
-			position: absolute;
-			top: -14px;
-			left: 243px;
-			width: 736px;
-		}
+	.menu-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5); /* Koyu gri arka plan */
+		backdrop-filter: blur(8px); /* Blur efekti */
+		z-index: 999; /* Hover menüden yüksek bir değer */
+		display: none; /* Varsayılan olarak gizli */
+	}
 
-		.header-menu > ul > li > .sublist-wrap {
-			top: auto;
-			left: 0;
-			width: 980px;
-			margin: 0 0 0 -196px; /*depends on logo cell width, which is always fixed*/
-		}
+	.header-menu:hover ~ .menu-overlay,
+	.category-navigation-list-wrapper:hover ~ .menu-overlay {
+		display: block;
+	}
+
+	.category-navigation-list > li > .sublist-wrap,
+	.header-menu > ul > li > .sublist-wrap { /*this is the flyout panel*/
+		display: none;
+		position: absolute;
+		top: -14px;
+		left: 243px;
+		width: 736px;
+		height: 470px !important;
+		overflow-y: auto;
+		z-index: 11;
+	}
+
+	.header-menu > ul > li > .sublist-wrap {
+		top: auto;
+		left: 0;
+		width: 980px;
+		height: 470px !important;
+		margin: 0 0 0 -196px; /*depends on logo cell width, which is always fixed*/
+	}
 
 		.category-navigation-list > li:first-child > .sublist-wrap {
 			top: 0;
 		}
 
-		.category-navigation-list > li:hover > .sublist-wrap,
-		.header-menu > ul > li:hover > .sublist-wrap { /*this is the flyout opening*/
-			display: block;
-		}
+	.category-navigation-list > li:hover > .sublist-wrap,
+	.header-menu > ul > li:hover > .sublist-wrap { /*this is the flyout opening*/
+		display: block;
+		margin-left: 0;
+		margin-top: 8px;
+		width: 100%;
+		position: absolute;
+		height: 470px !important;
+	}
 
-		.category-navigation-list > li > .sublist-wrap > .sublist,
-		.header-menu > ul > li > .sublist-wrap > .sublist { /*this is the inner list inside the flyout panel*/
-			overflow: hidden;
-			box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
-			background-color: #fff;
-			padding: 15px;
-		}
+	.category-navigation-list > li > .sublist-wrap > .sublist,
+	.header-menu > ul > li > .sublist-wrap > .sublist { /*this is the inner list inside the flyout panel*/
+		overflow: hidden;
+		box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+		background-color: #fff;
+		padding: 15px;
+		height: 100%;
+		display: flex;
+		justify-content: center; /* Yatay olarak ortalar */
+		align-items: flex-start; /* Üst kısma hizalar */
+	}
 
 			.category-navigation-list > li > .sublist-wrap > .sublist > li,
 			.header-menu > ul > li > .sublist-wrap > .sublist > li { /*this is a subcategory item (contains a list)*/
@@ -922,9 +955,11 @@
 
 		/* HOMEPAGE COLUMNS */
 
-		.two-columns-area {
-			margin: 0 0 50px;
-		}
+	.two-columns-area {
+		margin: 0 0 50px;
+		padding-left: 7px;
+		padding-right: 1px;
+	}
 
 			.two-columns-area > .center {
 				width: 980px;

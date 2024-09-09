@@ -1701,9 +1701,10 @@ td.footable-first-column {
 	margin: 0 0 5px;
 	text-align: center;
 }
-.breadcrumb ul {
-	font-size: 0;
-}
+	.breadcrumb ul {
+		font-size: 0;
+		margin-left: 38px;
+	}
 .breadcrumb li {
 	display: inline-block;
 }
@@ -3962,6 +3963,7 @@ td.footable-first-column {
 
 .customer-pages-body .master-column-wrapper {
 	overflow: hidden;
+	
 }
 .customer-pages-body .side-2 {
 	float: none;
@@ -6413,5 +6415,8 @@ td.footable-first-column {
 }
 
 .productItems{
-	margin-right:300px !important;
+	margin-right:12.75rem !important;
+}
+.pageWidth {
+	width: 96.5%;
 }
