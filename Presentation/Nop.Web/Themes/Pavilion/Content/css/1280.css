@@ -12,7 +12,14 @@
 
     .side-2 {
         width: 300px;
-        margin-left: 42px;
+        margin-left: 77px;
+    }
+
+    @media screen and (min-width: 1920px) {
+        .side-2 {
+            width: 300px;
+            margin-left: 2px !important;
+        }
     }
 
         .side-2 .page-title {
@@ -118,7 +125,7 @@
         }
 
     .store-search-box.full-width input.search-box-text {
-        width: 1138px;
+       /* width: 1138px;*/
     }
 
     /* HOMEPAGE COLUMNS */

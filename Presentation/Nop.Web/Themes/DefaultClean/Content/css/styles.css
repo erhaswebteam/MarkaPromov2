@@ -187,6 +187,7 @@ label, label + * {
 }
 
 .page {
+  width:849px;
   min-height: 200px;
   text-align: center;
 }

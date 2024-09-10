@@ -25,7 +25,7 @@
     //page class
     NopHtml.AppendPageCssClassParts("html-home-page");
 }
-<div class="page home-page">
+<div class="homeSlider home-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HomepageTop })
         @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })

@@ -59,7 +59,7 @@
     @await Html.PartialAsync("_ProductBreadcrumb", Model.Breadcrumb)
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page product-details-page">
+<div class="productDetails product-details-page" style="width:90.8%; padding-right: 11%; margin: auto">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductDetailsTop, additionalData = Model })
         <form asp-route="Product" asp-route-sename="@Model.SeName" method="post" id="product-details-form">
