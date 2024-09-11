@@ -1364,10 +1364,12 @@ namespace Nop.Web.Factories
             
 
             var models = new List<ProductOverviewModel>();
-            foreach (var product in products)
+			var availableProducts = products.Where(product => product.StockQuantity > 0);
+
+			foreach (var product in availableProducts)
             {
- 
-                var model = new ProductOverviewModel
+
+				var model = new ProductOverviewModel
                 {
                     Id = product.Id,
                     Name = await _localizationService.GetLocalizedAsync(product, x => x.Name),
