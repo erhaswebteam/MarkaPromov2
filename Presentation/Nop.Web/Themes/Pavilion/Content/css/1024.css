@@ -276,6 +276,7 @@
 
         .header-middle .center {
             display: table;
+
         }
 
     .header-logo {
@@ -1022,12 +1023,21 @@
         float: right;
         clear: right;
         margin: 0;
-        margin-right: 9rem;
+        margin-right: 5.4rem;
     }
 
         .store-search-box .search-box-button {
             margin: 0 -5px 0 5px;
         }
+
+    @media screen and (min-width: 1920px) {
+        .store-search-box {
+            float: right;
+            clear: right;
+            margin: 0;
+            margin-right: 9.3rem;
+        }
+    }
 
     .ui-autocomplete {
         z-index: 1015;

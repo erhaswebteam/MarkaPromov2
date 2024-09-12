@@ -907,7 +907,7 @@ td.footable-first-column {
 .header .center:after {
     content: "";
     display: block;
-    clear: both;
+    clear:both;
 }
 
 .header-links a {
@@ -1206,8 +1206,6 @@ td.footable-first-column {
 
     .store-search-box form {
         display: inline-block;
-        position: relative;
-        font-size: 0;
     }
 
     .store-search-box input.search-box-text {
@@ -1966,8 +1964,15 @@ td.footable-first-column {
 
     .breadcrumb ul {
         font-size: 0;
-        margin-left: 38px;
+        margin-left: 106px;
     }
+
+@media screen and (min-width: 1920px) {
+    .breadcrumb ul {
+        font-size: 0;
+        margin-left: 111px;
+    }
+}
 
     .breadcrumb li {
         display: inline-block;
