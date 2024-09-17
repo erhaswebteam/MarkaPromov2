@@ -9,6 +9,7 @@
         margin: auto;
     }
 
+
     .customer-pages-body .master-wrapper-content {
         padding: 70px 0 0;
     }
@@ -19,18 +20,27 @@
 
     .center-2 {
         float: right;
-        width: 715px;
+        width: 600px;
         margin: 0 0 90px;
     }
 
     .side-2 {
         float: left;
-        width: 245px;
+        width: 322px;
+
     }
 
     .page {
         clear: both;
         text-align: left;
+    }
+
+    @media screen and (min-width: 1025px) {
+        .side-2 {
+            float: left;
+            width: 322px;
+           
+        }
     }
 
     @media screen and (min-width: 1920px) {
